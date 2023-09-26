@@ -6,6 +6,7 @@
   
   <script>
     const handleResponse = async (response) => {
+      // Getting response info
       console.dir(response);
       const text = await response.text();
       const contentType = response.headers.get("Content-Type");
@@ -14,7 +15,7 @@
       // Creating data wrapper
       let displayData = {};
 
-      // Setting the header item (status)
+      // Setting the header item content (status)
       switch(response.status){
         case 200: displayData["status"] = "Success"; break;
         case 400: displayData["status"] = "Bad Request"; break;
@@ -23,7 +24,7 @@
         case 500: displayData["status"] = "Internal Server Error"; break;
         case 501: displayData["status"] = "Not Implemented"; break;
         case 404: displayData["status"] = "Resource Not Found"; break;
-        default: displayData["status"] = "Unknown Status Code"; break;
+        default: displayData["status"] = "Unknown Status Code"; break; // If the status code hasn't been accounted for
       }
 
       // Setting the paragraph item content (message)
@@ -33,25 +34,26 @@
       }else if (contentType === "text/xml"){
         const parsedXML = new window.DOMParser().parseFromString(text, "text/xml");
         displayData["message"] = parsedXML.querySelector("message").textContent;
-      }else{
-        displayData["message"] = "Unknown Content Type";
+      }else{ // If neither xml or json are accepted
+        displayData["message"] = "Error: Unknown Content Type";
       }
 
       // Putting the new HTML content together
-      document.querySelector("#content").innerHTML = `<h1>${displayData.status}</h1><p>${displayData.message}</p>`
+      document.querySelector("#content").innerHTML = `<h1>${displayData.status}</h1><p>Message: ${displayData.message}</p>`
     }
 
-
+    // Sends a fetch request to the server
     const sendFetch = async (url, acceptedType) => {
       const options = {
         method: 'GET',
         headers: { 'accept': acceptedType }
       };
       
-      const response = await fetch(url, options); // asynchronous operation, result is not recieved instantly. Therefore we need to wait
+      const response = await fetch(url, options);
       handleResponse(response);
     };
 
+    // Runs on startup, sets up responses to HTML inputs
     const init = () => {
       const pageSelect = document.querySelector("#page");
       const typeSelect = document.querySelector("#type");

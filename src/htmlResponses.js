@@ -1,4 +1,4 @@
-// This code directly from body-parse-example demo
+// This file's code is directly from body-parse-example demo
 const fs = require('fs'); // pull in the file system module
 
 const index = fs.readFileSync(`${__dirname}/../client/client.html`);
